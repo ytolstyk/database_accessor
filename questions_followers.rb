@@ -3,8 +3,9 @@ require "singleton"
 require_relative "questions_db"
 require_relative "users"
 require_relative "questions"
+require_relative "database_accessor"
 
-class QuestionFollower
+class QuestionFollower < DatabaseAccessor
   
   def self.all
     results = QuestionsDatabase.instance.execute('SELECT * FROM question_followers')

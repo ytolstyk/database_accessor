@@ -5,8 +5,9 @@ require_relative "questions"
 require_relative "replies"
 require_relative "questions_followers"
 require_relative "question_likes"
+require_relative "database_accessor"
 
-class User
+class User < DatabaseAccessor
   
   def self.all
     results = QuestionsDatabase.instance.execute('SELECT * FROM users')
@@ -43,21 +44,23 @@ class User
   def initialize(options = {})
     @id = options['id']
     @fname = options['fname']
-    @lname = options['lname']    
+    @lname = options['lname']
+    @database = "users"    
   end
   
-  def save
-    raise 'already saved!' unless @id.nil?
-    
-    QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
-    INSERT INTO
-      users (fname, lname)
-    VALUES
-      (?, ?)
-    SQL
-    
-    @id = QuestionsDatabase.instance.last_insert_row_id
-  end
+  # moved to super
+  # def save
+#     raise 'already saved!' unless @id.nil?
+#
+#     QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
+#     INSERT INTO
+#       users (fname, lname)
+#     VALUES
+#       (?, ?)
+#     SQL
+#
+#     @id = QuestionsDatabase.instance.last_insert_row_id
+#   end
   
   def name
     "#{fname} #{lname}"

@@ -3,8 +3,9 @@ require "singleton"
 require_relative "questions_db"
 require_relative "questions"
 require_relative "users"
+require_relative "database_accessor"
 
-class Reply
+class Reply < DatabaseAccessor
   
   def self.all
     results = QuestionsDatabase.instance.execute('SELECT * FROM replies')
@@ -55,21 +56,23 @@ class Reply
     @question_id = options["question_id"]
     @parent_id = options["parent_id"]
     @reply_author_id = options["reply_author_id"]
+    @database = "replies"
   end
   
-  def save
-    raise "already saved, son" unless @id.nil?
-    
-    argvars = [@body, @question_id, @parent_id, @reply_author_id]
-    QuestionsDatabase.instance.execute(<<-SQL, *argvars)
-    INSERT INTO
-      replies (body, question_id, parent_id, reply_author_id)
-    VALUES
-      (?, ?, ?, ?)
-    SQL
-    
-    @id = QuestionsDatabase.instance.last_insert_row_id
-  end
+  # moved to super
+  # def save
+#     raise "already saved, son" unless @id.nil?
+#
+#     argvars = [@body, @question_id, @parent_id, @reply_author_id]
+#     QuestionsDatabase.instance.execute(<<-SQL, *argvars)
+#     INSERT INTO
+#       replies (body, question_id, parent_id, reply_author_id)
+#     VALUES
+#       (?, ?, ?, ?)
+#     SQL
+#
+#     @id = QuestionsDatabase.instance.last_insert_row_id
+#   end
   
   def author
     User.find_by_id(@reply_author_id)

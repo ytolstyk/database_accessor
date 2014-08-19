@@ -57,6 +57,20 @@ class Reply
     @reply_author_id = options["reply_author_id"]
   end
   
+  def save
+    raise "already saved, son" unless @id.nil?
+    
+    argvars = [@body, @question_id, @parent_id, @reply_author_id]
+    QuestionsDatabase.instance.execute(<<-SQL, *argvars)
+    INSERT INTO
+      replies (body, question_id, parent_id, reply_author_id)
+    VALUES
+      (?, ?, ?, ?)
+    SQL
+    
+    @id = QuestionsDatabase.instance.last_insert_row_id
+  end
+  
   def author
     User.find_by_id(@reply_author_id)
   end

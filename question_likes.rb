@@ -18,7 +18,7 @@ class QuestionLike
     WHERE
       id = ?
     SQL
-      QuestionLike.new(result)
+      QuestionLike.new(result.first)
   end
   
   attr_accessor :id, :liker_id, :liked_question_id

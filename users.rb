@@ -1,6 +1,9 @@
 require "sqlite3"
 require "singleton"
 require_relative "questions_db"
+require_relative "questions"
+require_relative "replies"
+require_relative "questions_followers"
 
 class User
   
@@ -18,7 +21,7 @@ class User
     WHERE
       id = ?
     SQL
-    User.new(result)
+    User.new(result.first)
   end
   
   def self.find_by_name(fname, lname)
@@ -30,7 +33,7 @@ class User
     WHERE
       fname = ? AND lname = ?
     SQL
-    User.new(result)
+    User.new(result.first)
   end
   
   attr_accessor :id, :fname, :lname
@@ -41,7 +44,24 @@ class User
     @lname = options['lname']    
   end
   
-  def authored_questions
-    
+  def name
+    "#{fname} #{lname}"
   end
+  
+  def authored_questions
+    Question.find_by_author(@id)
+  end
+  
+  def authored_replies
+    Reply.find_by_user_id(@id)
+  end
+  
+  def followed_questions
+    QuestionFollower.followed_questions_for_user_id(@id)
+  end
+end
+
+if $PROGRAM_NAME == __FILE__
+  users = User.all
+  puts users[2].followed_questions
 end

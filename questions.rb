@@ -2,6 +2,7 @@ require "sqlite3"
 require "singleton"
 require_relative "questions_db"
 require_relative "questions_followers"
+require_relative "question_likes"
 
 class Question
   
@@ -34,6 +35,10 @@ class Question
     results.map { |result| Question.new(result) }
   end
   
+  def self.most_followed(n)
+    QuestionFollower.most_followed_questions(n)
+  end
+  
   attr_accessor :id, :title, :body, :author_id
   
   def initialize(options = {})
@@ -41,6 +46,14 @@ class Question
     @title = options["title"]
     @body = options["body"]
     @author_id = options["author_id"]
+  end
+  
+  def likers
+    QuestionLike.likers_for_question_id(@id)
+  end
+  
+  def num_likes
+    QuestionLike.num_likes_for_question_id(@id)
   end
   
   def followers
@@ -59,4 +72,6 @@ end
 if $PROGRAM_NAME == __FILE__
   questions = Question.all
   puts questions[0].followers
+  puts questions[0].num_likes
+  puts questions[0].likers.map { |x| x.name }
 end

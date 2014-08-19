@@ -56,7 +56,7 @@ class QuestionFollower
   end
   
   def self.most_followed_questions(n)
-    results = QuestionsDatabase.instance.execute(<<-SQL)
+    results = QuestionsDatabase.instance.execute(<<-SQL, n)
     SELECT
       questions.*, COUNT(follower_id)
     FROM
@@ -64,18 +64,20 @@ class QuestionFollower
     JOIN
       question_followers
     ON questions.id = question_followers.question_id
+    GROUP BY
+      questions.id
     ORDER BY
       COUNT(follower_id) DESC
-    GROUP BY
-      questions.*
+    LIMIT 
+      ?
     SQL
     
-    results.map {}.take(n)
+    results.map { |result| Question.new(result) }
   end
   
   attr_accessor :id, :follower_id, :question_id
   
-  def initialize(`options` = {})
+  def initialize(options = {})
     @id = options['id']
     @follower_id = options["follower_id"]
     @question_id = options["question_id"]
@@ -86,4 +88,5 @@ end
 if $PROGRAM_NAME == __FILE__
   puts QuestionFollower.followers_for_question_id(1).map { |user| user.name }
   puts QuestionFollower.followed_questions_for_user_id(2).map { |question| question.title }
+  puts QuestionFollower.most_followed_questions(1)
 end

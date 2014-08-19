@@ -4,6 +4,7 @@ require_relative "questions_db"
 require_relative "questions"
 require_relative "replies"
 require_relative "questions_followers"
+require_relative "question_likes"
 
 class User
   
@@ -48,6 +49,10 @@ class User
     "#{fname} #{lname}"
   end
   
+  def liked_questions
+    QuestionLike.liked_questions_for_user_id(@id)
+  end
+  
   def authored_questions
     Question.find_by_author(@id)
   end
@@ -64,4 +69,5 @@ end
 if $PROGRAM_NAME == __FILE__
   users = User.all
   puts users[2].followed_questions
+  puts users[0].liked_questions.map { |x| x.title }
 end

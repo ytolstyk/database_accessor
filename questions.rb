@@ -50,20 +50,6 @@ class Question < DatabaseAccessor
     @database = "questions"
   end
   
-  # moved to super
-  # def save
- #    raise "already saved" unless @id.nil?
- #
- #    QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @author_id)
- #    INSERT INTO
- #      questions (title, body, author_id)
- #    VALUES
- #      (?, ?, ?)
- #    SQL
- #
- #    @id = QuestionsDatabase.instance.last_insert_row_id
- #  end
-  
   def likers
     QuestionLike.likers_for_question_id(@id)
   end

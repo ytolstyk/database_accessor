@@ -104,8 +104,5 @@ class QuestionLike < DatabaseAccessor
 end
 
 if $PROGRAM_NAME == __FILE__
-  # puts QuestionLike.likers_for_question_id(1).map { |user| user.name }
-  # puts QuestionLike.num_likes_for_question_id(1)
-  # puts QuestionLike.liked_questions_for_user_id(1).map { |i| i.title }
   puts QuestionLike.most_liked_questions(1).map { |q| q.title }
 end
